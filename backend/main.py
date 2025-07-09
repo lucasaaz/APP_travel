@@ -75,16 +75,19 @@ def mark_place():
 # Buscar lugares pela API do Google Maps
 @app.route('/search_places', methods=['GET'])
 def search_places():
-    query = request.args.get('query')  # Ex: "bares em Buenos Aires"
+    query = request.args.get('query')
     location = request.args.get('location', "Buenos Aires, Argentina")
 
     results = gmaps.places(query=query, location=location)
     places = []
     for place in results.get("results", []):
+        geometry = place.get("geometry", {}).get("location", {})
         places.append({
             "name": place.get("name"),
             "address": place.get("formatted_address", "Endereço desconhecido"),
             "rating": place.get("rating", "Sem avaliação"),
+            "lat": geometry.get("lat"),
+            "lng": geometry.get("lng")
         })
 
     return jsonify(places)

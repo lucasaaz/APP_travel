@@ -3,14 +3,30 @@ import "./App.css";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 const mapContainerStyle = {
-  width: "70%", // Tamanho do mapa
-  height: "400px",
+  width: "1150px", // Tamanho do mapa
+  height: "1000px",
 };
 
 const center = {
   lat: -34.6037, // Latitude inicial (Buenos Aires)
   lng: -58.3816, // Longitude inicial (Buenos Aires)
 };
+
+const getIconForCategory = (category) => {
+  switch (category) {
+    case "restaurante":
+      return "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
+    case "estadio":
+      return "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+    case "ponto":
+      return "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+    case "shopping":
+      return "http://maps.google.com/mapfiles/ms/icons/orange-dot.png";
+    default:
+      return "http://maps.google.com/mapfiles/ms/icons/purple-dot.png";
+  }
+};
+
 
 const App = () => {
   const [query, setQuery] = useState("");
@@ -60,8 +76,9 @@ const App = () => {
     setQuery("");
   };
 
-  const addToVisited = (place) => {
-    setVisited([...visited, place]);
+  const addToVisited = (place, category) => {
+    const placeWithCategory = { ...place, category: category.toLowerCase() };
+    setVisited([...visited, placeWithCategory]);
     setSuggestions([]);
     setQuery("");
   };
@@ -87,7 +104,22 @@ const App = () => {
                 </span>
                 <div className="add-buttons">
                   <button onClick={() => addToWantToGo(place)}>Quero Visitar</button>
-                  <button onClick={() => addToVisited(place)}>Já Visitei</button>
+                  <select
+                    className="category-select"
+                    value={place.category || ""}
+                    onChange={(e) => {
+                      const category = e.target.value;
+                      if (category) addToVisited(place, category);
+                    }}
+                  >
+                    <option value="">Categoria...</option>
+                    <option value="estadio">Estádio</option>
+                    <option value="restaurante">Restaurante</option>
+                    <option value="ponto">PontoTurístico</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="outro">Outro</option>
+                  </select>
+
                 </div>
               </li>
             ))}
@@ -104,7 +136,7 @@ const App = () => {
                   key={index}
                   position={{ lat: place.lat, lng: place.lng }}
                   icon={{
-                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                    url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
                   }}
                   title={place.name}
                 />
@@ -116,15 +148,14 @@ const App = () => {
                   key={index}
                   position={{ lat: place.lat, lng: place.lng }}
                   icon={{
-                    url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
+                    url: getIconForCategory(place.category),
                   }}
-                  title={place.name}
+                  title={`${place.name} - ${place.category || "sem categoria"}`}
                 />
               ))}
             </GoogleMap>
           </LoadScript>
 
-          {/* Listas */}
           <div className="lists-container">
             <div className="list">
               <h2>Quero Visitar</h2>
@@ -132,6 +163,21 @@ const App = () => {
                 {wantToGo.map((place, index) => (
                   <li key={index}>
                     <strong>{place.name}</strong> - {place.address}
+                    <div className="add-buttons">
+                      <button onClick={() => {
+                        // mover para visitado
+                        setVisited([...visited, place]);
+                        setWantToGo(wantToGo.filter((_, i) => i !== index));
+                      }}>
+                        Marcar como Visitado
+                      </button>
+                      <button onClick={() => {
+                        // remover
+                        setWantToGo(wantToGo.filter((_, i) => i !== index));
+                      }}>
+                        Remover
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -143,6 +189,21 @@ const App = () => {
                 {visited.map((place, index) => (
                   <li key={index}>
                     <strong>{place.name}</strong> - {place.address}
+                    <div className="add-buttons">
+                      <button onClick={() => {
+                        // mover para "quero visitar"
+                        setWantToGo([...wantToGo, place]);
+                        setVisited(visited.filter((_, i) => i !== index));
+                      }}>
+                        Voltar para Quero Visitar
+                      </button>
+                      <button onClick={() => {
+                        // remover
+                        setVisited(visited.filter((_, i) => i !== index));
+                      }}>
+                        Remover
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
