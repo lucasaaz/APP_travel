@@ -55,7 +55,7 @@ const App = () => {
     }
 
     fetch(
-      `http://127.0.0.1:5000/search_places?query=${encodeURIComponent(
+      `https://app-travel-l7ns.onrender.com/search_places?query=${encodeURIComponent(
         inputValue
       )}&location=Buenos+Aires`
     )
