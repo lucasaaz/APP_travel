@@ -82,6 +82,20 @@ def mark_place():
         return jsonify({"error": "Lugar não encontrado!"}), 404
 
 
+@app.route('/add_place', methods=['POST'])
+def add_place():
+    data = request.json
+    new_place = Place(
+        name=data['name'],
+        address=data['address'],
+        category=data.get('category'),
+        visited=data.get('visited', False)
+    )
+    db.session.add(new_place)
+    db.session.commit()
+    return jsonify({"message": "Lugar adicionado com sucesso!", "id": new_place.id})
+
+
 # Buscar lugares pela API do Google Maps
 @app.route('/search_places', methods=['GET'])
 def search_places():
