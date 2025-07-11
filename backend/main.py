@@ -7,7 +7,11 @@ import datetime
 # Configuração do app e banco de dados
 app = Flask(__name__)
 CORS(app)  # Adiciona permissão para o React acessar o Flask
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///travel_planner.db'
+
+# Pega a URL do banco do ambiente
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
 # Configuração do Google Maps API
@@ -44,6 +48,11 @@ with app.app_context():
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/create_db')
+def create_db():
+    db.create_all()
+    return 'Banco criado com sucesso!'
 
 # Criar uma lista personalizada
 @app.route('/create_list', methods=['POST'])
