@@ -24,6 +24,8 @@ class Place(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     address = db.Column(db.String(300), nullable=False)
+    lat = db.Column(db.Float)  
+    lng = db.Column(db.Float)  
     category = db.Column(db.String(100), nullable=True)
     visited = db.Column(db.Boolean, default=False)
 
@@ -107,6 +109,22 @@ def delete_place():
         return jsonify({"message": "Lugar deletado com sucesso!"})
     else:
         return jsonify({"error": "Lugar não encontrado!"}), 404
+
+@app.route('/get_places', methods=['GET'])
+def get_places():
+    places = Place.query.all()
+    return jsonify([
+        {
+            "id": place.id,
+            "name": place.name,
+            "address": place.address,
+            "lat": place.lat if hasattr(place, 'lat') else None,
+            "lng": place.lng if hasattr(place, 'lng') else None,
+            "category": place.category,
+            "visited": place.visited
+        }
+        for place in places
+    ])
 
 
 # Buscar lugares pela API do Google Maps
