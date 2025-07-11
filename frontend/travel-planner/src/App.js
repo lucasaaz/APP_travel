@@ -71,17 +71,72 @@ const App = () => {
   };
 
   const addToWantToGo = (place) => {
-    setWantToGo([...wantToGo, place]);
+    const placeWithVisitedFalse = { ...place, visited: false };
+  
+    // Envia para o backend
+    fetch("https://app-travel-l7ns.onrender.com/add_place", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(placeWithVisitedFalse),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log("Lugar 'Quero Visitar' salvo no backend:", data))
+      .catch((err) => console.error("Erro ao salvar lugar 'Quero Visitar':", err));
+  
+    setWantToGo([...wantToGo, placeWithVisitedFalse]);
     setSuggestions([]);
     setQuery("");
   };
-
+  
   const addToVisited = (place, category) => {
-    const placeWithCategory = { ...place, category: category.toLowerCase() };
+    const placeWithCategory = { ...place, category: category.toLowerCase(), visited: true };
+  
+    // Envia para o backend
+    fetch("https://app-travel-l7ns.onrender.com/add_place", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(placeWithCategory),
+    })
+      .then((res) => res.json())
+      .then((data) => console.log("Salvo no backend:", data))
+      .catch((err) => console.error("Erro ao salvar:", err));
+  
     setVisited([...visited, placeWithCategory]);
     setSuggestions([]);
     setQuery("");
   };
+
+  const markPlaceAsVisited = (place, index) => {
+    // Atualiza no backend
+    fetch("https://app-travel-l7ns.onrender.com/mark_place", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: place.id, visited: true }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        // Atualiza no frontend só após sucesso
+        setVisited([...visited, { ...place, visited: true }]);
+        setWantToGo(wantToGo.filter((_, i) => i !== index));
+      })
+      .catch((err) => console.error("Erro ao marcar visitado:", err));
+  };
+
+  const markPlaceAsWantToGo = (place, index) => {
+    fetch("https://app-travel-l7ns.onrender.com/mark_place", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: place.id, visited: false }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setWantToGo([...wantToGo, { ...place, visited: false }]);
+        setVisited(visited.filter((_, i) => i !== index));
+      })
+      .catch((err) => console.error("Erro ao voltar para Quero Visitar:", err));
+  };
+
+
 
   return (
     <div className="App">
@@ -164,11 +219,7 @@ const App = () => {
                   <li key={index}>
                     <strong>{place.name}</strong> - {place.address}
                     <div className="add-buttons">
-                      <button onClick={() => {
-                        // mover para visitado
-                        setVisited([...visited, place]);
-                        setWantToGo(wantToGo.filter((_, i) => i !== index));
-                      }}>
+                      <button onClick={() => markPlaceAsVisited(place, index)}>
                         Marcar como Visitado
                       </button>
                       <button onClick={() => {
@@ -190,11 +241,7 @@ const App = () => {
                   <li key={index}>
                     <strong>{place.name}</strong> - {place.address}
                     <div className="add-buttons">
-                      <button onClick={() => {
-                        // mover para "quero visitar"
-                        setWantToGo([...wantToGo, place]);
-                        setVisited(visited.filter((_, i) => i !== index));
-                      }}>
+                      <button onClick={() => markPlaceAsWantToGo(place, index)}>
                         Voltar para Quero Visitar
                       </button>
                       <button onClick={() => {
