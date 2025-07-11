@@ -96,6 +96,19 @@ def add_place():
     return jsonify({"message": "Lugar adicionado com sucesso!", "id": new_place.id})
 
 
+@app.route('/delete_place', methods=['POST'])
+def delete_place():
+    data = request.json
+    place_id = data.get('id')
+    place = Place.query.filter_by(id=place_id).first()
+    if place:
+        db.session.delete(place)
+        db.session.commit()
+        return jsonify({"message": "Lugar deletado com sucesso!"})
+    else:
+        return jsonify({"error": "Lugar não encontrado!"}), 404
+
+
 # Buscar lugares pela API do Google Maps
 @app.route('/search_places', methods=['GET'])
 def search_places():
