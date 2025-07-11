@@ -117,7 +117,7 @@ const App = () => {
       .then(() => {
         // Atualiza no frontend só após sucesso
         setVisited([...visited, { ...place, visited: true }]);
-        setWantToGo(wantToGo.filter((_, i) => i !== index));
+        setWantToGo(wantToGo.filter((p) => p.id !== place.id))
       })
       .catch((err) => console.error("Erro ao marcar visitado:", err));
   };
@@ -131,7 +131,7 @@ const App = () => {
       .then((res) => res.json())
       .then(() => {
         setWantToGo([...wantToGo, { ...place, visited: false }]);
-        setVisited(visited.filter((_, i) => i !== index));
+        setVisited(visited.filter((p) => p.id !== place.id));
       })
       .catch((err) => console.error("Erro ao voltar para Quero Visitar:", err));
   };
@@ -232,11 +232,11 @@ const App = () => {
             <div className="list">
               <h2>Quero Visitar</h2>
               <ul>
-                {wantToGo.map((place, index) => (
-                  <li key={index}>
+                {wantToGo.map((place) => (
+                  <li key={place.id}>
                     <strong>{place.name}</strong> - {place.address}
                     <div className="add-buttons">
-                      <button onClick={() => markPlaceAsVisited(place, index)}>
+                      <button onClick={() => markPlaceAsVisited(place)}>
                         Marcar como Visitado
                       </button>
                       <button onClick={() => deletePlace(place, false)}>
@@ -255,7 +255,7 @@ const App = () => {
                   <li key={index}>
                     <strong>{place.name}</strong> - {place.address}
                     <div className="add-buttons">
-                      <button onClick={() => markPlaceAsWantToGo(place, index)}>
+                      <button onClick={() => markPlaceAsWantToGo(place)}>
                         Voltar para Quero Visitar
                       </button>
                       <button onClick={() => deletePlace(place, true)}>
