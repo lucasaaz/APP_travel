@@ -64,47 +64,57 @@ const App = () => {
       .catch((error) => console.error("Erro ao buscar lugares:", error));
   };
 
+  
   const handleQueryChange = (e) => {
     const inputValue = e.target.value;
     setQuery(inputValue);
     fetchSuggestions(inputValue);
   };
 
+  
   const addToWantToGo = (place) => {
     const placeWithVisitedFalse = { ...place, visited: false };
   
-    // Envia para o backend
     fetch("https://app-travel-l7ns.onrender.com/add_place", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(placeWithVisitedFalse),
     })
       .then((res) => res.json())
-      .then((data) => console.log("Lugar 'Quero Visitar' salvo no backend:", data))
+      .then((data) => {
+        const placeWithId = { ...placeWithVisitedFalse, id: data.id };
+        setWantToGo([...wantToGo, placeWithId]);
+      })
       .catch((err) => console.error("Erro ao salvar lugar 'Quero Visitar':", err));
   
-    setWantToGo([...wantToGo, placeWithVisitedFalse]);
     setSuggestions([]);
     setQuery("");
   };
+
   
   const addToVisited = (place, category) => {
-    const placeWithCategory = { ...place, category: category.toLowerCase(), visited: true };
+    const placeWithCategory = {
+      ...place,
+      category: category.toLowerCase(),
+      visited: true
+    };
   
-    // Envia para o backend
     fetch("https://app-travel-l7ns.onrender.com/add_place", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(placeWithCategory),
     })
       .then((res) => res.json())
-      .then((data) => console.log("Salvo no backend:", data))
+      .then((data) => {
+        const placeWithId = { ...placeWithCategory, id: data.id };
+        setVisited([...visited, placeWithId]);
+      })
       .catch((err) => console.error("Erro ao salvar:", err));
   
-    setVisited([...visited, placeWithCategory]);
     setSuggestions([]);
     setQuery("");
   };
+
 
   const markPlaceAsVisited = (place) => {
     // Atualiza no backend
@@ -122,6 +132,7 @@ const App = () => {
       .catch((err) => console.error("Erro ao marcar visitado:", err));
   };
 
+  
   const markPlaceAsWantToGo = (place) => {
     fetch("https://app-travel-l7ns.onrender.com/mark_place", {
       method: "POST",
@@ -136,6 +147,7 @@ const App = () => {
       .catch((err) => console.error("Erro ao voltar para Quero Visitar:", err));
   };
 
+  
   const deletePlace = (place, fromVisited) => {
     fetch("https://app-travel-l7ns.onrender.com/delete_place", {
       method: "POST",
