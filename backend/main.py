@@ -90,6 +90,8 @@ def add_place():
     new_place = Place(
         name=data['name'],
         address=data['address'],
+        lat=data.get('lat'),       
+        lng=data.get('lng'),       
         category=data.get('category'),
         visited=data.get('visited', False)
     )
