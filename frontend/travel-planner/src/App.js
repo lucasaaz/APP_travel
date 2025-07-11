@@ -31,21 +31,35 @@ const getIconForCategory = (category) => {
 const App = () => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [wantToGo, setWantToGo] = useState(() =>
-    JSON.parse(localStorage.getItem("wantToGo")) || []
-  );
-  const [visited, setVisited] = useState(() =>
-    JSON.parse(localStorage.getItem("visited")) || []
-  );
+
+  // const [wantToGo, setWantToGo] = useState(() =>
+  //   JSON.parse(localStorage.getItem("wantToGo")) || []
+  // );
+  // const [visited, setVisited] = useState(() =>
+  //   JSON.parse(localStorage.getItem("visited")) || []
+  // );
 
   // Atualiza listas no localStorage
-  useEffect(() => {
-    localStorage.setItem("wantToGo", JSON.stringify(wantToGo));
-  }, [wantToGo]);
+  // useEffect(() => {
+  //   localStorage.setItem("wantToGo", JSON.stringify(wantToGo));
+  // }, [wantToGo]);
+
+  // useEffect(() => {
+  //   localStorage.setItem("visited", JSON.stringify(visited));
+  // }, [visited]);
 
   useEffect(() => {
-    localStorage.setItem("visited", JSON.stringify(visited));
-  }, [visited]);
+    fetch("https://app-travel-l7ns.onrender.com/get_places")
+      .then((res) => res.json())
+      .then((data) => {
+        const visitedPlaces = data.filter((place) => place.visited);
+        const wantToGoPlaces = data.filter((place) => !place.visited);
+
+        setVisited(visitedPlaces);
+        setWantToGo(wantToGoPlaces);
+      })
+      .catch((err) => console.error("Erro ao carregar lugares salvos:", err));
+  }, []);
 
   // Busca sugestões no backend
   const fetchSuggestions = (inputValue) => {
