@@ -136,6 +136,23 @@ const App = () => {
       .catch((err) => console.error("Erro ao voltar para Quero Visitar:", err));
   };
 
+  const deletePlace = (place, fromVisited) => {
+    fetch("https://app-travel-l7ns.onrender.com/delete_place", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: place.id }),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        if (fromVisited) {
+          setVisited(visited.filter((p) => p.id !== place.id));
+        } else {
+          setWantToGo(wantToGo.filter((p) => p.id !== place.id));
+        }
+      })
+      .catch((err) => console.error("Erro ao deletar lugar:", err));
+  };
+
 
 
   return (
@@ -222,10 +239,7 @@ const App = () => {
                       <button onClick={() => markPlaceAsVisited(place, index)}>
                         Marcar como Visitado
                       </button>
-                      <button onClick={() => {
-                        // remover
-                        setWantToGo(wantToGo.filter((_, i) => i !== index));
-                      }}>
+                      <button onClick={() => deletePlace(place, false)}>
                         Remover
                       </button>
                     </div>
@@ -244,10 +258,7 @@ const App = () => {
                       <button onClick={() => markPlaceAsWantToGo(place, index)}>
                         Voltar para Quero Visitar
                       </button>
-                      <button onClick={() => {
-                        // remover
-                        setVisited(visited.filter((_, i) => i !== index));
-                      }}>
+                      <button onClick={() => deletePlace(place, true)}>
                         Remover
                       </button>
                     </div>
