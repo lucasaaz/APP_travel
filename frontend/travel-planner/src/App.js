@@ -106,7 +106,7 @@ const App = () => {
     setQuery("");
   };
 
-  const markPlaceAsVisited = (place, index) => {
+  const markPlaceAsVisited = (place) => {
     // Atualiza no backend
     fetch("https://app-travel-l7ns.onrender.com/mark_place", {
       method: "POST",
@@ -122,7 +122,7 @@ const App = () => {
       .catch((err) => console.error("Erro ao marcar visitado:", err));
   };
 
-  const markPlaceAsWantToGo = (place, index) => {
+  const markPlaceAsWantToGo = (place) => {
     fetch("https://app-travel-l7ns.onrender.com/mark_place", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -203,9 +203,9 @@ const App = () => {
           <LoadScript googleMapsApiKey="AIzaSyCymXsTmYyT3JdhBHQd4eK0a3mzWxiZws0"> {/* Adicione sua chave aqui */}
             <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={13}>
               {/* Marcadores para lugares da lista "Quero Visitar" */}
-              {wantToGo.map((place, index) => (
+              {wantToGo.map((place) => (
                 <Marker
-                  key={index}
+                  key={place.id}
                   position={{ lat: place.lat, lng: place.lng }}
                   icon={{
                     url: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
@@ -215,9 +215,9 @@ const App = () => {
               ))}
 
               {/* Marcadores para lugares da lista "Já Visitei" */}
-              {visited.map((place, index) => (
+              {visited.map((place) => (
                 <Marker
-                  key={index}
+                  key={place.id}
                   position={{ lat: place.lat, lng: place.lng }}
                   icon={{
                     url: getIconForCategory(place.category),
@@ -251,8 +251,8 @@ const App = () => {
             <div className="list">
               <h2>Já Visitei</h2>
               <ul>
-                {visited.map((place, index) => (
-                  <li key={index}>
+                {visited.map((place) => (
+                  <li key={place.id}>
                     <strong>{place.name}</strong> - {place.address}
                     <div className="add-buttons">
                       <button onClick={() => markPlaceAsWantToGo(place)}>
