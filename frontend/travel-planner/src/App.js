@@ -32,12 +32,12 @@ const App = () => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  // const [wantToGo, setWantToGo] = useState(() =>
-  //   JSON.parse(localStorage.getItem("wantToGo")) || []
-  // );
-  // const [visited, setVisited] = useState(() =>
-  //   JSON.parse(localStorage.getItem("visited")) || []
-  // );
+  const [wantToGo, setWantToGo] = useState(() =>
+    JSON.parse(localStorage.getItem("wantToGo")) || []
+  );
+  const [visited, setVisited] = useState(() =>
+    JSON.parse(localStorage.getItem("visited")) || []
+  );
 
   // Atualiza listas no localStorage
   // useEffect(() => {
