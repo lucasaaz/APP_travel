@@ -52,10 +52,10 @@ with app.app_context():
 def home():
     return render_template('index.html')
 
-# @app.route('/create_db')
-# def create_db():
-#     db.create_all()
-#     return 'Banco criado com sucesso!'
+@app.route('/create_db')
+def create_db():
+    db.create_all()
+    return 'Banco criado com sucesso!'
 
 # Criar uma lista personalizada
 @app.route('/create_list', methods=['POST'])
