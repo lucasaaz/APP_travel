@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import googlemaps
 import datetime
+import os
 
 # Configuração do app e banco de dados
 app = Flask(__name__)
