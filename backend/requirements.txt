@@ -4,7 +4,7 @@ Flask-SQLAlchemy==3.1.1
 gunicorn==23.0.0
 SQLAlchemy==2.0.41
 python-dotenv==1.0.1
-psycopg2-binary==2.9.9
+psycopg2==2.9.9
 requests==2.31.0
 googlemaps==4.10.0
 Werkzeug==3.1.3
